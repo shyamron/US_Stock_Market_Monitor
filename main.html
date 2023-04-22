@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="css\styles.css">
+    <title>STOCK MARKET
+</title>
+</head>
+<body>
+
+<div class="navbar">
+    <h1>US Stock Market</h1>
+</div>
+
+
+<div class="grid-container" >
+    <div class="info">Monitor the stocks here! <br>
+        <br>
+        1. Enter stock ticker symbol (Eg. AAPL, AMGN, AXP, BA, CAT, DIS, DOW, GS, HD, HON, IBM, INTC, JNJ, MCD, MMM, MRK, MSFT, V, VZ, WBA, WMT) <br>
+        2. Enter the threshold amount in USD.<br>
+        3. Select the notification type.<br>
+        4. Submit and verify your Email ID or Phone number. <br>
+        <br>
+        Thats it! <br>
+        You will get notified if the stocks price has exceeded the threshold you provided through the method you have selected.
+    </div>
+    <div class="entry" id="entry"  style="flex: 1;" >
+        <form class="form" id='my-form'  method="post" onsubmit="return validateForm()">
+            <h2>Monitor your stocks</h2>
+            <label for="symbol">Enter stock ticker symbol *</label>
+            <input id="symbol" name="symbol" required/>
+
+            <label>Select threshold in USD *</label>
+            <input id="threshold" name="threshold" type="number" required/>
+
+            <label>Enter stock checking period *</label>
+            <select id="time" name="time" required>
+                <option value="" >Select</option>
+                <option value="1h">Every hour</option>
+                <option value="1d">Every day</option>
+                <option value="1wk">Every week</option>
+                <option value="1mo">Every month</option>
+            </select>
+
+            <label for="notification">Select notification type *</label>
+            <select id="notification" name="notification" required>
+                <option value="">Select</option>
+                <option value="email">Email</option>
+                <option value="number">Phone number</option>
+            </select>
+
+            <div id="Email">
+              <label for="notification_info">Enter email*</label>
+              <input id="notification_info" name="notification_info" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+            </div>
+              <div id="Number">
+              <label for="notification_info">Enter phone number *</label>
+              <input id="notification_info" name="notification_info" type="tel" minlength="10" maxlength="10" pattern="[0-9]" required>
+          </div>
+
+            <h5 style="color: red; margin-right: 100px;">(* required)</h5>
+            <button type="submit" id="btn" >Submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+      $('#Email').hide();
+      $('#Number').hide();
+  
+      $('#notification').change(function() {
+          var selectedOption = $(this).val();
+          if (selectedOption === 'email' ) {
+              $('#Email').show();
+              $('#Number').hide();
+          } else if (selectedOption === 'number') {
+              $('#Number').show();
+              $('#Email').hide();
+          }else{
+              $('#Email').hide();
+              $('#Number').hide();
+          }
+      });
+  
+  });
+  </script>
+
+<script>
+$(function() {
+    var availableTickers = [
+      "AAPL", "AMGN", "AXP", "BA", "CAT", "CRM", "CSCO", "CVX", "DIS", "DOW", "GS", "HD", "HON", "IBM", "INTC", "JNJ",
+      "JPM", "KO", "MCD", "MMM", "MRK", "MSFT", "NKE", "PG", "TRV", "UNH", "V", "VZ", "WBA", "WMT"
+    ];
+  
+    $("#symbol").autocomplete({
+      source: availableTickers,
+      change: function(event, ui) {
+        var value = $(this).val();
+        var valid = false;
+        for (var i = 0; i < availableTickers.length; i++) {
+          if (availableTickers[i].toLowerCase() === value.toLowerCase()) {
+            valid = true;
+            break;
+          }
+        }
+        if (!valid) {
+        alert("Invalid ticker symbol!");
+        $(this).val("");
+      }
+      }
+    });
+  });
+</script>
+
+<script>
+    const link = document.getElementById('btn');
+    link.addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('Link clicked!');
+    var formdata = new FormData();
+    var symbol = document.getElementById('symbol').value;
+    var notification = document.getElementById('notification').value;
+    var time = document.getElementById('time').value;
+    var threshold = document.getElementById('threshold').value;
+    var notification_info = document.getElementById('notification_info').value;
+    console.log(notification_info)
+    fetch('http://127.0.0.1:5000/submit', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "symbol": symbol,
+            "notification": notification,
+            "time":time,
+            "threshold":threshold,
+            "notification_info":notification_info
+  })
+    })
+
+    .then(response =>{
+        console.log(response);
+        console.log("sent")
+    })
+    .catch(error => console.log("error"));
+    });
+  </script>
+</body>
+</html>
