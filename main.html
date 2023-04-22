@@ -31,7 +31,7 @@
         You will get notified if the stocks price has exceeded the threshold you provided through the method you have selected.
     </div>
     <div class="entry" id="entry"  style="flex: 1;" >
-        <form class="form" id='my-form'  method="post" onsubmit="return validateForm()">
+        <form class="form" id='my-form'  method="post">
             <h2>Monitor your stocks</h2>
             <label for="symbol">Enter stock ticker symbol *</label>
             <input id="symbol" name="symbol" required/>
@@ -56,41 +56,41 @@
             </select>
 
             <div id="Email">
-              <label for="notification_info">Enter email*</label>
-              <input id="notification_info" name="notification_info" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+              <label for="email_info">Enter email*</label>
+              <input id="email_info" name="email_info" type="email">
             </div>
               <div id="Number">
-              <label for="notification_info">Enter phone number *</label>
-              <input id="notification_info" name="notification_info" type="tel" minlength="10" maxlength="10" pattern="[0-9]" required>
+              <label for="number_info">Enter phone number *</label>
+              <input id="number_info" name="number_info" type="tel" minlength="10" maxlength="10">
           </div>
+          <script>
+            $(document).ready(function() {
+                $('#Email').hide();
+                $('#Number').hide();
+                $('#notification').change(function() {
+                    var selectedOption = $(this).val();
+                    if (selectedOption === 'email' ) {
+                        $('#Email').show();
+                        $('#Number').hide();
+                    } else if (selectedOption === 'number') {
+                        $('#Number').show();
+                        $('#Email').hide();
+                    }else{
+                        $('#Email').hide();
+                        $('#Number').hide();
+                    }
+                });          
+            });
+            </script>
 
             <h5 style="color: red; margin-right: 100px;">(* required)</h5>
             <button type="submit" id="btn" >Submit</button>
+            <div id="display"></div>
         </form>
     </div>
 </div>
 
-<script>
-  $(document).ready(function() {
-      $('#Email').hide();
-      $('#Number').hide();
-  
-      $('#notification').change(function() {
-          var selectedOption = $(this).val();
-          if (selectedOption === 'email' ) {
-              $('#Email').show();
-              $('#Number').hide();
-          } else if (selectedOption === 'number') {
-              $('#Number').show();
-              $('#Email').hide();
-          }else{
-              $('#Email').hide();
-              $('#Number').hide();
-          }
-      });
-  
-  });
-  </script>
+
 
 <script>
 $(function() {
@@ -119,38 +119,60 @@ $(function() {
   });
 </script>
 
-<script>
-    const link = document.getElementById('btn');
-    link.addEventListener('click', function(e) {
-    e.preventDefault();
-    console.log('Link clicked!');
-    var formdata = new FormData();
-    var symbol = document.getElementById('symbol').value;
-    var notification = document.getElementById('notification').value;
-    var time = document.getElementById('time').value;
-    var threshold = document.getElementById('threshold').value;
-    var notification_info = document.getElementById('notification_info').value;
-    console.log(notification_info)
-    fetch('http://127.0.0.1:5000/submit', {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            "symbol": symbol,
-            "notification": notification,
-            "time":time,
-            "threshold":threshold,
-            "notification_info":notification_info
-  })
-    })
 
-    .then(response =>{
-        console.log(response);
-        console.log("sent")
-    })
-    .catch(error => console.log("error"));
-    });
-  </script>
+<script>
+  var display = document.getElementById("display");
+  document.getElementById("entry").addEventListener("submit", function(e) {
+      e.preventDefault();
+      var symbol = document.getElementById('symbol').value;
+      var notification = document.getElementById('notification').value;
+      var time = document.getElementById('time').value;
+      var threshold = document.getElementById('threshold').value;
+      
+      var email_info = document.getElementById('email_info').value;
+      var number_info = document.getElementById('number_info').value;
+      
+      if (notification == "number") {
+        if (!number_info) {
+          display.innerHTML = "Please enter a phone number.";
+          return;
+        }
+        var notification_info = number_info;
+      } else {
+        if (!email_info) {
+          display.innerHTML = "Please enter an email address.";
+          return;
+        }
+        var notification_info = email_info;
+      }
+      
+      fetch('http://127.0.0.1:5000/submit', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              "symbol": symbol,
+              "notification": notification,
+              "time":time,
+              "threshold":threshold,
+              "notification_info":notification_info
+          })
+      })
+      .then(response => {
+          if (response.ok) {
+              display.innerHTML = "Successful! You will now receive notifications through "+notification_info;
+          } else {
+              display.innerHTML = "Error submitting form data.";
+          }
+      })
+      .catch(error => {
+          console.error(error);
+          display.innerHTML = "Error submitting form data.";
+      });
+  });
+</script>
+
+  
 </body>
 </html>
