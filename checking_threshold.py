@@ -91,7 +91,7 @@ def monitor(entry_id, entered_data):
     notification_info = entered_data['notification_info']
 
     if time_period =='1h':
-        set_timer = 60
+        set_timer = 3600
     elif time_period == '1d':
         set_timer = 86400
     elif time_period == '1wk':
