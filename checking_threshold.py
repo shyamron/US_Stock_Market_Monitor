@@ -34,14 +34,14 @@ def send_via_mail(ticker,notification_info,time,price):
 
 def send_via_phone(ticker, notification_info, time, price):
     account_sid = "AC0e3531c1cb7e774a554b19db166fb225"
-    auth_token = "368b3f60c95169b1d1c42b4043cf6ef3"
+    auth_token = "6a54145b2a151c3abdf68f8d85877d43"
     client = Client(account_sid, auth_token)
 
     message = client.messages \
                     .create(
                         body="Hello. This is an email about the Stock Market Price. The price for " + str(ticker) + " is " + str(price) + " which has exceeded your entered threshold price. Date: " + str(time),
                         from_='+16074007579',
-                        to='+977'+notification_info
+                        to="+9779860999660"
                     )
     print(message.sid)
 
