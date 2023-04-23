@@ -5,10 +5,13 @@ Monitor your Stocks
 This is a web application that allows users to receive notification when the price of a given stock reaches a certain threshold.
 
 
-TOOLS USED:
+TOOLS/ TECHNOLOGIES USED:
 1. Python with Flask framework
 2. HTML/CSS
+3. Yahoo Finance API
 
+
+Stock price data is retrieved from here--https://finance.yahoo.com/quote/%5EGSPC/history?p=%5EGSPC
 Files:
 1. get_ticker.py is used to extract stock ticker symbols. Output is dow_list.csv
 2. main.html has frontpage UI and backend.py uses Flask framework. Run "flask --app backend run" 
