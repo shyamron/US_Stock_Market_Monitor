@@ -14,3 +14,4 @@ Files:
 2. main.html has frontpage UI and backend.py uses Flask framework. Run "flask --app backend run" 
 3. backend.py calls monitor function which is in checking_threshold.py. checking_threshold.py contains all functions that extracts live stock price, compares with threshold price and sends notifications
 
+For futher details, see documentation-- https://drive.google.com/file/d/1NhP3Bs2A2ruhEBwBE3qIiHMVDyhQP4rG/view?usp=share_link
